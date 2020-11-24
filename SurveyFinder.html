@@ -1,0 +1,128 @@
+<?php
+   include_once 'dbconnect.php';
+?>
+
+<!DOCTYPE html>
+
+  <html lang = "en">
+  
+  <head>
+    <title>SurveyFinder</title>
+    <style>
+      body{
+	bottom: 65%;
+	background-color: #ff9900;
+    </style>
+    <style>
+      #map{
+        margin-left: auto;
+        margin-right: auto;
+	height: 500px;
+	width: 1000px;
+	background-color: blue;
+      }
+    </style>
+    <style>
+      #title{
+      font-family: Arial Black;
+      text-decoration: underline;
+      position: relative;
+      text-align: center;
+      top: 0px;
+      text-align: center;
+      text-transform: uppercase;
+      width: 100%;
+      color: black;
+      }	
+    p{
+      font-family: Arial Black;
+      text-align: center;
+      color: black;
+    }
+    #popup{
+	font-family: Arial Black;
+	color: black;
+    }
+    #php{
+	font-family: Arial Black;
+	color: black;
+	text-align: center;
+    }
+    </style>
+    <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+  <script>
+  function initMap(){
+   var denver = {lat: 39.88, lng: -105.000007};
+   var office = {lat: 39.802588, lng: -105.095227};
+   var map = new google.maps.Map(document.getElementById('map'),
+   {zoom: 9, center: denver});
+   var marker = new google.maps.Marker({position: office, map: map, title: 'Office'});
+   var content = 'This is a test popup';
+   var infowindow = new google.maps.InfoWindow({
+     content: content 
+   });
+   marker.addListener('click', function(){
+     infowindow.open(map, marker);
+   });
+   var northLat = 40.44274635;<!--initial northmost lat-->
+   var westLong = -105.519332;<!--initial westmost long-->
+   var eastLong = westLong + .05367175;<!--initial eastmost long-->
+   var count = 0;
+   for(var i=0; i<400; i++){
+   northLat -= .05142835;
+   if(count>19){
+   northLat = 40.391318;<!--set north lat back to northmost-->
+   westLong += .05367175; <!--move westLong over-->
+   eastLong += .05367175; <!--move eastLong over-->
+   count=0;<!--return count to zero-->
+   }
+   var rectangle = new google.maps.Rectangle({
+	strokeColor: '#696969',
+	strokeOpacity: 0.6,
+	strokeWeight: 2,
+	fillColor: '#ff9900',
+	fillOpacity: 0.45,
+	map: map,
+	bounds: { 
+	  north: northLat,
+	  south: northLat-.05142835,
+	  east: eastLong,
+          west: westLong,    
+	}
+   });
+     count++;
+     rectangle.addListener('click', function(event) {
+     var lat = event.latLng;
+     var long = event.latLng;
+     map.panTo(lat, long);
+     map.setZoom(13);
+   }); 
+   }
+ }	
+ </script>
+  </head>
+
+ 
+  <body>
+  <div id="title">
+  <h1>Survey Finder</h1>
+  </div>
+  <p>
+  Survey Finder lets you search property surveys and purchase PDF's of survey drawings for 
+  use in real estate transactions, home improvements and more. 
+  </p>
+  <div id="map"></div>
+  <p>Click inside one of the orange rectangles to zoom to that location</p>
+ <script async defer
+    src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAJUdn8nTInkksK_W_-IDzRM7gCdcoP5qE&callback=initMap">
+ </script>
+ 
+ <div>
+ <h2> This site is in development to make available for purchase surveys produced at Huffman Surveying. The functionality of the Google Maps API was being tested for usefulness towards this goal. The orange grid is the region within
+      which surveys are produced. Originally, the site was built on the LAMP stack, using a MySQL database to which survey addresses and data were stored and made calls to. This functionality is no longer available as a migration is
+      being made to the more agile Ruby on Rails framework. 
+</h2>
+
+ </body>
+
+  </html>
